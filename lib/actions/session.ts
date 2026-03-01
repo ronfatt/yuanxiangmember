@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../supabase/server";
+import { isAdminEmail } from "../metaenergy/auth";
 
 export async function requireUser() {
   const supabase = createClient();
@@ -16,6 +17,11 @@ export async function requireAdmin() {
   if (!auth.user) {
     redirect("/login");
   }
+
+  if (isAdminEmail(auth.user.email)) {
+    return auth.user;
+  }
+
   const { data: role } = await supabase
     .from("admin_roles")
     .select("role")

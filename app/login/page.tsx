@@ -1,83 +1,13 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
-import { createClient } from "../../lib/supabase/client";
+import LoginForm from "../../components/LoginForm";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = async () => {
-    try {
-      setLoading(true);
-      const supabase = createClient();
-      if (!email || !password) {
-        toast.error("Enter email and password.");
-        return;
-      }
-
-      if (!/^\d{6}$/.test(password)) {
-        toast.error("Password must be 6 digits.");
-        return;
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      if (error) throw error;
-      toast.success("Login successful.");
-      router.push("/dashboard");
-      router.refresh();
-    } catch (error) {
-      toast.error("Login failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(203,230,210,0.55),_transparent_28%),linear-gradient(180deg,_#f5f1e8_0%,_#ffffff_100%)]">
       <SiteHeader />
       <main className="container py-12">
-        <div className="card mx-auto max-w-lg space-y-4">
-          <h1 className="font-display text-3xl">Member Login</h1>
-          <p className="text-black/70">Login with your email and 6-digit password.</p>
-          <div className="space-y-3">
-            <input
-              className="w-full rounded-lg border p-3"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              className="w-full rounded-lg border p-3"
-              type="password"
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="6-digit password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value.replace(/\D/g, "").slice(0, 6))}
-            />
-          </div>
-          <button onClick={handleLogin} disabled={loading} className="rounded-full bg-ink px-6 py-3 text-white">
-            {loading ? "Logging in..." : "Login"}
-          </button>
-          <p className="text-sm text-black/60">
-            No account?{" "}
-            <Link href="/register" className="text-jade underline">
-              Free register
-            </Link>
-          </p>
-        </div>
+        <LoginForm />
       </main>
       <SiteFooter />
     </div>
